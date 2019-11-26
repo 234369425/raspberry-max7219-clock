@@ -1,5 +1,6 @@
 package com.beheresoft.big.font;
 
+import com.beheresoft.raspberryPi.font.FontModel;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
 import com.pi4j.io.spi.SpiFactory;
@@ -69,7 +70,7 @@ public class LedBitmap16_16 {
     }
 
     public void showRightNow16(String text, boolean english) {
-        short[] values = english ? new EnglishString().getEnglishBuffer(text) : new MyStrings().getStringBuffer(text);
+        short[] values = FontModel.INSTANCE.parse(text);
         byte[] data = rotate90(splitIntoTwoScreen(values));
         boolean down = true;
         int upIndex = 0, downIndex = 0;
@@ -568,11 +569,6 @@ public class LedBitmap16_16 {
         }
 
         return result;
-    }
-
-    public static void main(String[] args) {
-        short[] buffer = new MyStrings().getStringBuffer("晴 -2 ℃ .");
-        System.out.printf(buffer.toString());
     }
 
 }

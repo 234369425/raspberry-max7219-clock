@@ -1,6 +1,9 @@
 package com.beheresoft.big.font;
 
 
+import com.beheresoft.raspberryPi.font.FontModel;
+import com.beheresoft.raspberryPi.font.model.Chinese16Model;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,7 +35,7 @@ public class MyStrings {
 
     private short[] combineShortArray(short[] firstArray, short[] secondArray) {
         int len1 = 0;
-        if (firstArray != null){
+        if (firstArray != null) {
             len1 = firstArray.length;
         }
         int len2 = secondArray.length;
@@ -40,7 +43,7 @@ public class MyStrings {
         if (firstArray != null) {
             System.arraycopy(firstArray, 0, resultArray, 0, firstArray.length);
             System.arraycopy(secondArray, 0, resultArray, firstArray.length, secondArray.length);
-        } else{
+        } else {
             return secondArray;
         }
         return resultArray;
@@ -230,7 +233,7 @@ class ChineseString {
      * 无参构造函数
      */
     public ChineseString() {
-        File file = new File("HZK16C");// 字库文件，放在同一目录下
+        File file = new File("I:\\clock\\fonts\\HZK16C");// 字库文件，放在同一目录下
         try {
             FileInputStream fis = new FileInputStream(file);
             dotfont = new byte[fis.available()];
@@ -280,7 +283,7 @@ class ChineseString {
      *
      * @param one
      */
-    private byte[] getOneChineseModule(String one) {
+    byte[] getOneChineseModule(String one) {
         if (one.length() != 1) {
             return null;
         }
@@ -305,7 +308,7 @@ class ChineseString {
      * @param s
      * @return
      */
-    private byte[] str2bytes(String s) {
+    byte[] str2bytes(String s) {
         if (null == s || "".equals(s)) {
             return null;
         }
@@ -319,6 +322,7 @@ class ChineseString {
         }
         return null;
     }
+
 }
 
 class Font_8_16 {
@@ -852,5 +856,24 @@ class Font_8_16 {
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
             }; // end of F_8_16_FONT
+
+    public static void main(String[] args) {
+        System.setProperty("font.location", "I:\\clock\\fonts");
+        short[] b = new MyStrings().getStringBuffer("你啊ab是么?");
+        short[] c = FontModel.INSTANCE.parse("你啊ab是么?");
+        if (b.length != c.length) {
+            System.out.println("error");
+            return;
+        }
+
+        for (int i = 0; i < b.length; i++) {
+            if (b[i] != c[i]) {
+                System.out.println("error $i ${b[i]} ${c[i]}");
+                return;
+            }
+        }
+
+        System.out.println("ok");
+    }
 
 }

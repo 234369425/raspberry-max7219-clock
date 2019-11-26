@@ -13,7 +13,6 @@ import java.util.concurrent.Callable
 import kotlin.concurrent.thread
 
 fun main(args: Array<String>) {
-
     thread {
         while (true) {
             Weather.get()
