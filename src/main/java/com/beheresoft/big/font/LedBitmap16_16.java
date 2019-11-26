@@ -1,5 +1,6 @@
 package com.beheresoft.big.font;
 
+import com.beheresoft.raspberryPi.Application;
 import com.beheresoft.raspberryPi.font.FontModel;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
@@ -10,7 +11,7 @@ import com.pi4j.io.spi.SpiFactory;
  */
 public class LedBitmap16_16 {
 
-    private static final boolean debug = false;
+    private static final boolean debug = Application.INSTANCE.debug();
     private static final int speed = 30;// 演示时间
 
     public static class Constants {
@@ -69,7 +70,7 @@ public class LedBitmap16_16 {
         return true;// 显示完成，返回true
     }
 
-    public void showRightNow16(String text, boolean english) {
+    public void showRightNow16(String text) {
         short[] values = FontModel.INSTANCE.parse(text);
         byte[] data = rotate90(splitIntoTwoScreen(values));
         boolean down = true;
@@ -327,7 +328,7 @@ public class LedBitmap16_16 {
     //
     //
     //
-    private byte[] splitIntoTwoScreen(short[] val) {
+    public byte[] splitIntoTwoScreen(short[] val) {
         if (val.length % 64 != 0)
             return null;
         int len = val.length;
@@ -378,7 +379,6 @@ public class LedBitmap16_16 {
             }
 
         }
-
         return src;
     }
 

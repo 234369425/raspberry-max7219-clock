@@ -6,6 +6,7 @@ import com.beheresoft.raspberryPi.io.sr501.SR501Event
 import com.beheresoft.raspberryPi.plugin.Weather
 import com.pi4j.io.gpio.RaspiPin
 import com.pi4j.wiringpi.Gpio
+import java.lang.Exception
 import java.lang.Thread.sleep
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,7 +39,7 @@ fun main(args: Array<String>) {
     sleep(1000)
     led.open()
     val time = SimpleDateFormat("HH:mm:ss")
-    val date = SimpleDateFormat(" MM dd ")
+    val date = SimpleDateFormat("MM月dd日")
     var calendar: Calendar
     while (true) {
         calendar = Calendar.getInstance()
@@ -47,14 +48,18 @@ fun main(args: Array<String>) {
         when {
             minute % 5 == 0 &&
                     seconds in 40..44 -> {
-                led.showRightNow16(date.format(System.currentTimeMillis()), true)
+                led.showRightNow16(date.format(System.currentTimeMillis()))
             }
             minute % 3 == 0 &&
                     seconds in 45..58 -> {
-                led.showRightNow16(Weather.temp, false)
+                try {
+                    led.showRightNow16(Weather.temp)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
             else -> {
-                led.showRightNow16(time.format(System.currentTimeMillis()), true)
+                led.showRightNow16(time.format(System.currentTimeMillis()))
             }
         }
 
@@ -78,5 +83,4 @@ fun main(args: Array<String>) {
         led.flush()
         sleep(100)
     }
-
 }

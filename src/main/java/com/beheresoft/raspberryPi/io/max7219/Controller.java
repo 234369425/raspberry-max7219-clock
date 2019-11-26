@@ -1,6 +1,7 @@
 package com.beheresoft.raspberryPi.io.max7219;
 
 import com.beheresoft.big.font.LedBitmap16_16;
+import com.beheresoft.raspberryPi.Application;
 import com.beheresoft.raspberryPi.font.FontModel;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
@@ -11,20 +12,26 @@ public class Controller {
     private SPEED scrollSpeed = SPEED.NORMAL;
     private SpiDevice spi;
     private DIRECTION direction = DIRECTION.EAST;
-    private int boardCount = 1;
-    private int rows = 2;
-    private Object[] buffers;
-    private int bytesEachBoard;
+    private final int rows = 2;
+    private final Object[] buffers;
+    private final int bytesEachBoard;
+    private final int boardCount;
+    private final int boardRowCount;
+
+    public Controller() {
+        this(16, 2, 8);
+    }
 
     public Controller(int boardCount, int rows, int bytesEachBoard) {
         this.boardCount = boardCount;
-        buffers = new Object[rows];
+        this.buffers = new Object[rows];
         this.bytesEachBoard = bytesEachBoard;
+        this.boardRowCount = boardCount / rows;
         for (int i = 0; i < rows; i++) {
             buffers[i] = new byte[bytesEachBoard * boardCount / rows];
         }
 
-        if (System.getProperty("debug") == null) {
+        if (!Application.INSTANCE.debug()) {
             try {
                 this.spi = SpiFactory.getInstance(SpiChannel.CS0, SpiDevice.DEFAULT_SPI_SPEED,
                         SpiDevice.DEFAULT_SPI_MODE);
@@ -41,67 +48,50 @@ public class Controller {
 
     public void showRightNow16(String text) {
         short[] values = FontModel.INSTANCE.parse(text);
-        byte[] data = rotate(splitIntoTwoScreen(values));
+        byte[] data = rotate(splitDataIntoRows(values));
         int[] index = new int[buffers.length];
         int bufferIndex = 0;
         for (int i = 0; i < data.length; i++) {
             if (i % 32 == 0) {
-                bufferIndex = bufferIndex/
+                if (++bufferIndex >= buffers.length) {
+                    bufferIndex = 0;
+                }
             }
-            if (index[buffers.length - 1] >= this.buffer_down.length) {
+            byte[] buffer = (byte[]) buffers[bufferIndex];
+            if (index[buffers.length - 1] >= buffer.length) {
                 break;
             }
-
-            if (down) {
-                this.buffer_down[downIndex++] = data[i];
-            } else {
-                this.buffer_up[upIndex++] = data[i];
-            }
+            buffer[index[bufferIndex]++] = data[i];
         }
         this.flush();
     }
 
-    private byte[] splitIntoTwoScreen(short[] val) {
-        if (val.length % 64 != 0) {
+    /*
+     * 将数据分割到行内
+     * 比如两排，
+     * 1 2 3 4 5 6 7 8
+     * ===============
+     * 9 10 11 12 13 14 15 16
+     * @return
+     */
+    public byte[] splitDataIntoRows(short[] data) {
+        //8 + 8 + 8 + 8 点阵，需要长度32凑成一个字
+        if (data.length % 32 != 0) {
             return null;
         }
-        byte[] src = new byte[val.length];
-
-        for (int i = 0; i < src.length / 64; i++) {
-            // 0~7 8~15
-            for (int j = 0; j < 8; j++) {
-                // 1#屏幕
-                src[j + i * 64] = (byte) (0xff & val[2 * j + i * 64]);
-            }
-            //2号屏幕
-            for (int j = 8; j < 16; j++) {
-                src[j + i * 64] = (byte) (0xff & val[2 * j - 15 + i * 64]);
-            }
-
-            //3、4号屏幕
-            for (int j = 16; j < 24; j++) {
-                src[j + i * 64] = (byte) (0xff & val[j * 2 + i * 64]);// 3#
-            }
-            for (int j = 24; j < 32; j++) {
-                src[j + i * 64] = (byte) (0xff & val[2 * j - 15 + i * 64]);// 4#（j-24)*2+33=2*j-15
-            }
-
-            //5、6号屏幕
-            for (int j = 32; j < 40; j++) {
-                src[j + i * 64] = (byte) (0xff & val[2 * j - 48 + i * 64]);// 5#
-            }
-            for (int j = 40; j < 48; j++) {
-                src[j + i * 64] = (byte) (0xff & val[2 * j - 63 + i * 64]);// 6#
-            }
-            //7、8号屏幕
-            for (int j = 48; j < 56; j++) {
-                src[j + i * 64] = (byte) (0xff & val[2 * j - 48 + i * 64]);// 7#
-            }
-            for (int j = 56; j < 64; j++) {
-                src[j + i * 64] = (byte) (0xff & val[2 * j - 63 + i * 64]);// 8#
+        byte[] res = new byte[data.length];
+        for (int i = 0; i < data.length / 32; i++) {
+            for (int j = 0; j < 32; j++) {
+                if (j / bytesEachBoard % 2 == 0) {
+                    System.out.println((j + i * 32) + "---" + (j * 2 + i * 32));
+                    res[j + i * 32] = (byte) (0xff & data[j + i * 32]);
+                } else {
+                    System.out.println((j + i * 32) + "---" + (j * 2 - 15 + i * 32));
+                    res[j + i * 32] = (byte) (0xff & data[j - 1 + i * 32]);
+                }
             }
         }
-        return src;
+        return res;
     }
 
     public void clear() {
@@ -124,7 +114,7 @@ public class Controller {
             int len = 2 * this.boardCount;
             byte[] ret = new byte[len];
             for (int i = 0; i < this.boardCount; i++) {
-                byte[] buffer = (byte[]) buffers[i / rows];
+                byte[] buffer = (byte[]) buffers[i % rows];
                 ret[2 * i] = (byte) ((position + REG_DIGIT0) & 0xff);
                 ret[2 * i + 1] = buffer[i % buffers.length + position];
             }
@@ -192,17 +182,13 @@ public class Controller {
     }
 
     private void spiWrite(byte[] bytes) {
-        if (System.getProperty("debug") == null) {
+        Application.INSTANCE.printBytes(bytes);
+        if (!Application.INSTANCE.debug()) {
             try {
                 this.spi.write(bytes);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
-            for (byte b : bytes) {
-                System.out.print(b + ",");
-            }
-            System.out.println();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.beheresoft.raspberryPi.font.model
 
+import com.beheresoft.raspberryPi.Application
 import java.io.FileInputStream
 import java.nio.CharBuffer
 import java.nio.charset.Charset
@@ -10,8 +11,7 @@ object Chinese16Model {
     private lateinit var fontCache: ByteArray
 
     init {
-        val fontFile = System.getProperty("font.location", "") + "/" + System.getProperty("font.name", "HZK16C")
-        FileInputStream(fontFile).use {
+        FileInputStream(Application.fontFile()).use {
             fontCache = ByteArray(it.available())
             it.read(fontCache)
         }

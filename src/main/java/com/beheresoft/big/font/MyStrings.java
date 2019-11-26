@@ -1,6 +1,7 @@
 package com.beheresoft.big.font;
 
 
+import com.beheresoft.raspberryPi.Application;
 import com.beheresoft.raspberryPi.font.FontModel;
 import com.beheresoft.raspberryPi.font.model.Chinese16Model;
 
@@ -233,7 +234,7 @@ class ChineseString {
      * 无参构造函数
      */
     public ChineseString() {
-        File file = new File("I:\\clock\\fonts\\HZK16C");// 字库文件，放在同一目录下
+        File file = new File(Application.INSTANCE.fontFile());// 字库文件，放在同一目录下
         try {
             FileInputStream fis = new FileInputStream(file);
             dotfont = new byte[fis.available()];

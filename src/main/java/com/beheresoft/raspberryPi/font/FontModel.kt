@@ -8,7 +8,14 @@ object FontModel {
     private const val lastEnglishChar = '~'
 
     fun parse(string: String): ShortArray {
-        val charArray = string.toCharArray()
+        var charArray = string.toCharArray()
+        var bufferSize = calcBufferSize(charArray)
+        var str = string
+        if(bufferSize % 64 != 0){   //临时处理一下必须为两个两个汉字的问题
+            bufferSize += 32
+            str += "  "
+            charArray = str.toCharArray()
+        }
         val short = ShortArray(calcBufferSize(charArray))
         var index = 0
         for (char in charArray) {
