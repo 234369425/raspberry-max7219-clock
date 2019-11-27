@@ -339,30 +339,39 @@ public class LedBitmap16_16 {
             /* 1 2号屏幕点阵 */
             for (int j = 0; j < 8; j++)// scr:0- 7| 8-15<-----value:0-15*
             {
+                //System.out.println((j + i * 64) + " -1-> " + (2 * j + i * 64));
                 src[j + i * 64] = (byte) (0xff & val[2 * j + i * 64]);// 1#屏幕
             }
             for (int j = 8; j < 16; j++)// scr:0- 7| 8-15<-----value:0-15*
             {
+                //System.out.println((j + i * 64) + " -2-> " + (2 * j - 15 + i * 64));
                 src[j + i * 64] = (byte) (0xff & val[2 * j - 15 + i * 64]);// 2#
             }
 
             /* 3 4号屏幕点阵 */
             for (int j = 16; j < 24; j++)// scr:16-23|24-31<-----val:32-47*
             {
+                //System.out.println((j + i * 64) + " -3-> " + (2 * j + i * 64));
                 src[j + i * 64] = (byte) (0xff & val[j * 2 + i * 64]);// 3#
             }
             for (int j = 24; j < 32; j++)// scr:16-23|24-31<-----val:32-47*
             {
+                //System.out.println((j + i * 64) + " -4-> " + (2 * j - 15 + i * 64));
+
                 src[j + i * 64] = (byte) (0xff & val[2 * j - 15 + i * 64]);// 4#（j-24)*2+33=2*j-15
             }
 
             /* 5 6号屏幕点阵 */
             for (int j = 32; j < 40; j++)// scr:32-39|40-47<-----16-31*
             {
+               // System.out.println((j + i * 64) + " -5-> " + (2 * j - 48 + i * 64));
+
                 src[j + i * 64] = (byte) (0xff & val[2 * j - 48 + i * 64]);// 5#
             }
             for (int j = 40; j < 48; j++)// scr:32-39|40-47<-----16-31*
             {
+                //System.out.println((j + i * 64) + " - 6 -> " + (2 * j - 63 + i * 64));
+
                 src[j + i * 64] = (byte) (0xff & val[2 * j - 63 + i * 64]);// 6#
                 // 2*j-63
             }
@@ -370,11 +379,82 @@ public class LedBitmap16_16 {
             /* 7 8号屏幕点阵:从val中直接发送到对应的src中 */
             for (int j = 48; j < 56; j++)// scr:48-55|56-63<-----val:48-63*
             {
+                //System.out.println((j + i * 64) + " -7-> " + (2 * j - 48+ i * 64));
+
                 src[j + i * 64] = (byte) (0xff & val[2 * j - 48 + i * 64]);// 7#
             }
             for (int j = 56; j < 64; j++)// scr:48-55|56-63<-----val:48-63*
             {
+                //System.out.println((j + i * 64) + " -8-> " + (2 * j - 63 + i * 64));
+
                 src[j + i * 64] = (byte) (0xff & val[2 * j - 63 + i * 64]);// 8#
+                // 2*j-63
+            }
+
+        }
+        return src;
+    }
+
+    public short[] splitShortIntoTwoScreen(short[] val) {
+        if (val.length % 64 != 0)
+            return null;
+        int len = val.length;
+        short[] src = new short[len];
+
+        for (int i = 0; i < src.length / 64; i++) {
+            /* 实际数据测试见excel表格 */
+            /* 1 2号屏幕点阵 */
+            for (int j = 0; j < 8; j++)// scr:0- 7| 8-15<-----value:0-15*
+            {
+                //System.out.println((j + i * 64) + " -1-> " + (2 * j + i * 64));
+                src[j + i * 64] = val[2 * j + i * 64];// 1#屏幕
+            }
+            for (int j = 8; j < 16; j++)// scr:0- 7| 8-15<-----value:0-15*
+            {
+                //System.out.println((j + i * 64) + " -2-> " + (2 * j - 15 + i * 64));
+                src[j + i * 64] = val[2 * j - 15 + i * 64];// 2#
+            }
+
+            /* 3 4号屏幕点阵 */
+            for (int j = 16; j < 24; j++)// scr:16-23|24-31<-----val:32-47*
+            {
+                //System.out.println((j + i * 64) + " -3-> " + (2 * j + i * 64));
+                src[j + i * 64] = val[j * 2 + i * 64];// 3#
+            }
+            for (int j = 24; j < 32; j++)// scr:16-23|24-31<-----val:32-47*
+            {
+                //System.out.println((j + i * 64) + " -4-> " + (2 * j - 15 + i * 64));
+
+                src[j + i * 64] = val[2 * j - 15 + i * 64];// 4#（j-24)*2+33=2*j-15
+            }
+
+            /* 5 6号屏幕点阵 */
+            for (int j = 32; j < 40; j++)// scr:32-39|40-47<-----16-31*
+            {
+                // System.out.println((j + i * 64) + " -5-> " + (2 * j - 48 + i * 64));
+
+                src[j + i * 64] = val[2 * j - 48 + i * 64];// 5#
+            }
+            for (int j = 40; j < 48; j++)// scr:32-39|40-47<-----16-31*
+            {
+                //System.out.println((j + i * 64) + " - 6 -> " + (2 * j - 63 + i * 64));
+
+                src[j + i * 64] = val[2 * j - 63 + i * 64];// 6#
+                // 2*j-63
+            }
+
+            /* 7 8号屏幕点阵:从val中直接发送到对应的src中 */
+            for (int j = 48; j < 56; j++)// scr:48-55|56-63<-----val:48-63*
+            {
+                //System.out.println((j + i * 64) + " -7-> " + (2 * j - 48+ i * 64));
+
+                src[j + i * 64] = val[2 * j - 48 + i * 64];// 7#
+            }
+            for (int j = 56; j < 64; j++)// scr:48-55|56-63<-----val:48-63*
+            {
+                //System.out.println((j + i * 64) + " -8-> " + (2 * j - 63 + i * 64));
+
+                src[j + i * 64] = val[2 * j - 63 + i * 64];// 8#
                 // 2*j-63
             }
 

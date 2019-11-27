@@ -68,10 +68,7 @@ public class Controller {
 
     /*
      * 将数据分割到行内
-     * 比如两排，
-     * 1 2 3 4 5 6 7 8
-     * ===============
-     * 9 10 11 12 13 14 15 16
+     * 暂时只实现2行
      * @return
      */
     public byte[] splitDataIntoRows(short[] data) {
@@ -80,6 +77,7 @@ public class Controller {
             return null;
         }
         byte[] res = new byte[data.length];
+
         for (int i = 0; i < data.length / 32; i++) {
             for (int j = 0; j < 32; j++) {
                 if (j / bytesEachBoard % 2 == 0) {
@@ -124,6 +122,7 @@ public class Controller {
 
     private byte[] rotate(byte[] data) {
         byte[] result = new byte[data.length];
+
         for (int i = 0; i < this.boardCount * bytesEachBoard / 2; i += bytesEachBoard) {
             byte[] tile = new byte[bytesEachBoard];
             for (int j = 0; j < bytesEachBoard; j++) {

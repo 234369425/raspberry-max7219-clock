@@ -87,40 +87,11 @@ public class MyStrings {
     }
 
     /**
-     * 测试用，通过控制台，按照汉字的方式两两输出英文
-     *
-     * @param buffer
-     */
-    private void printByConsole(short[] buffer) {
-        int key[] =
-                {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
-
-        int strLength = buffer.length;
-        if (strLength % 32 != 0) {
-            System.out.println("字符串缓存返回错误（不是32的倍数）");
-            return;
-        }
-        for (int len = 0; len < strLength / 32; len++) {
-            for (int k = 0; k < 16; k++) {
-                for (int j = 0; j < 2; j++) {
-                    short byteDate = buffer[k * 2 + j + len * 32];
-                    for (int i = 0; i < 8; i++) {
-                        int flag = byteDate & key[i];
-                        System.out.printf("%s", flag == 0 ? " " : "●");
-                    }
-                }
-                System.out.println();
-            }
-            System.out.println("************************");
-        }
-    }
-
-    /**
      * 测试用，通过控制台打印输出汉字
      *
      * @param buffer
      */
-    private void printByConsoleEnglish(short[] buffer) {
+    public void printByConsoleEnglish(short[] buffer) {
         int key[] =
                 {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 
@@ -135,7 +106,7 @@ public class MyStrings {
                     short byteDate = buffer[k + 16 * j + len * 32];
                     for (int i = 0; i < 8; i++) {
                         int flag = byteDate & key[i];
-                        System.out.printf("%s", flag == 0 ? " " : "●");
+                        System.out.printf("%s", flag == 0 ? "　" : "●");
                     }
                 }
                 System.out.println();
@@ -857,24 +828,4 @@ class Font_8_16 {
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
             }; // end of F_8_16_FONT
-
-    public static void main(String[] args) {
-        System.setProperty("font.location", "I:\\clock\\fonts");
-        short[] b = new MyStrings().getStringBuffer("你啊ab是么?");
-        short[] c = FontModel.INSTANCE.parse("你啊ab是么?");
-        if (b.length != c.length) {
-            System.out.println("error");
-            return;
-        }
-
-        for (int i = 0; i < b.length; i++) {
-            if (b[i] != c[i]) {
-                System.out.println("error $i ${b[i]} ${c[i]}");
-                return;
-            }
-        }
-
-        System.out.println("ok");
-    }
-
 }
