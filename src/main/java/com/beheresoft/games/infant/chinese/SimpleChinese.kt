@@ -6,16 +6,11 @@ import java.net.URLEncoder
 import java.security.KeyManagementException
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
-import javax.media.format.AudioFormat
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import javax.media.Manager
 import java.net.URL
-import javax.media.Format
-import javax.media.PlugInManager
-import javax.media.PlugInManager.CODEC
 
 
 object SimpleChinese {
@@ -37,6 +32,7 @@ object SimpleChinese {
     }
 
     fun playMp3(url: String) {
+        /**
         val inMp3 = AudioFormat(AudioFormat.MPEGLAYER3)
         val outLinear = AudioFormat(AudioFormat.LINEAR)
         PlugInManager.addPlugIn(
@@ -44,7 +40,7 @@ object SimpleChinese {
                 arrayOf<Format>(inMp3), arrayOf<Format>(outLinear),
                 CODEC)
         val player = Manager.createPlayer(URL(url))
-        player.start()
+        player.start()*/
     }
 
 
