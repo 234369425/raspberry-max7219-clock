@@ -13,9 +13,8 @@ object Weather {
     var temp = ""
     inline fun <reified T> Gson.fromJson(json: String) = fromJson(json, T::class.java)
 
-    fun get() {
+    fun get(file: String = "/opt/java/data/weather.json") {
         try {
-            val file = System.getProperty("weather.file.location", "/opt/java/data/weather.json")
             val result = File(file).readText()
             val rs = Gson().fromJson(result, Rs::class.java)
             val location = rs.results!![0]["location"]
