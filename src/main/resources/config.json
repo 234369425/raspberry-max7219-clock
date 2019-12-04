@@ -1,11 +1,13 @@
 {
+  "debug": "true",
   "quartz": [
     {
       "event": "quartz:read:weather",
       "cron": "1 * * * * ? ",
       "description": "read weather info",
       "args": {
-        "filePath": "/opt/java/data/weather.json"
+        "filePath": "/opt/java/data/weather.json",
+        "format": ""
       }
     }
   ]

@@ -4,7 +4,11 @@ import com.beheresoft.raspberryPi.io.sr501.GpioLed
 import com.beheresoft.raspberryPi.io.sr501.SR501Event
 import com.beheresoft.raspberryPi.plugin.Weather
 import com.beheresoft.raspberryPi.scheduler.QuartzVerticle
+import com.beheresoft.raspberryPi.verticle.ClockVerticle
+import com.beheresoft.raspberryPi.verticle.DisplayVerticle
 import com.beheresoft.raspberryPi.verticle.WeatherVerticle
+import com.beheresoft.raspberryPi.verticle.bean.DisplayMessage
+import com.beheresoft.raspberryPi.verticle.bean.DisplayMessageCodec
 import com.pi4j.io.gpio.RaspiPin
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.DeploymentOptions
@@ -19,6 +23,7 @@ class MainVerticle : AbstractVerticle() {
     private val logger = LoggerFactory.getLogger(MainVerticle::class.java)
 
     override fun start(startFuture: Future<Void>?) {
+        vertx.eventBus().registerDefaultCodec(DisplayMessage::class.java,DisplayMessageCodec())
         vertx.deployVerticle(QuartzVerticle::class.java, createWorkerOption()) {
             if (it.succeeded()) {
                 logger.info("scheduler deploy success~~")
@@ -26,8 +31,10 @@ class MainVerticle : AbstractVerticle() {
                 it.cause().printStackTrace()
             }
         }
-
+        System.setProperty("debug", config().getString("debug"))
         vertx.deployVerticle(WeatherVerticle::class.java, createWorkerOption())
+        vertx.deployVerticle(ClockVerticle::class.java, createWorkerOption())
+        vertx.deployVerticle(DisplayVerticle::class.java, createWorkerOption())
         logger.info("started")
     }
 
@@ -40,12 +47,6 @@ class MainVerticle : AbstractVerticle() {
 }
 
 fun main(args: Array<String>) {
-    thread {
-        while (true) {
-            Weather.get()
-            sleep(60 * 1000)
-        }
-    }
 
     GpioLed.register()
     SR501Event.registerGpio(RaspiPin.GPIO_07, Callable {
