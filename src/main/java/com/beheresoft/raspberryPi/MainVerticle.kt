@@ -2,7 +2,6 @@ package com.beheresoft.raspberryPi
 
 import com.beheresoft.raspberryPi.io.sr501.GpioLed
 import com.beheresoft.raspberryPi.io.sr501.SR501Event
-import com.beheresoft.raspberryPi.plugin.Weather
 import com.beheresoft.raspberryPi.scheduler.QuartzVerticle
 import com.beheresoft.raspberryPi.verticle.ClockVerticle
 import com.beheresoft.raspberryPi.verticle.DisplayVerticle
@@ -14,16 +13,14 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Future
 import io.vertx.core.logging.LoggerFactory
-import java.lang.Thread.sleep
 import java.util.concurrent.Callable
-import kotlin.concurrent.thread
 
 class MainVerticle : AbstractVerticle() {
 
     private val logger = LoggerFactory.getLogger(MainVerticle::class.java)
 
-    override fun start(startFuture: Future<Void>?) {
-        vertx.eventBus().registerDefaultCodec(DisplayMessage::class.java,DisplayMessageCodec())
+    override fun start() {
+        vertx.eventBus().registerDefaultCodec(DisplayMessage::class.java, DisplayMessageCodec())
         vertx.deployVerticle(QuartzVerticle::class.java, createWorkerOption()) {
             if (it.succeeded()) {
                 logger.info("scheduler deploy success~~")
@@ -31,7 +28,8 @@ class MainVerticle : AbstractVerticle() {
                 it.cause().printStackTrace()
             }
         }
-        System.setProperty("debug", config().getString("debug"))
+        Application.setConfig(config())
+
         vertx.deployVerticle(WeatherVerticle::class.java, createWorkerOption())
         vertx.deployVerticle(ClockVerticle::class.java, createWorkerOption())
         vertx.deployVerticle(DisplayVerticle::class.java, createWorkerOption())

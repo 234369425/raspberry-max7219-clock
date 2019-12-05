@@ -4,14 +4,23 @@ import com.beheresoft.big.font.LedBitmap16_16
 import com.beheresoft.big.font.MyStrings
 import com.beheresoft.raspberryPi.font.FontModel
 import com.beheresoft.raspberryPi.io.max7219.BitOperation.printByConsole
-import com.beheresoft.raspberryPi.io.max7219.BitOperation.shortAndInt
 import com.beheresoft.raspberryPi.io.max7219.Controller
+import io.vertx.core.json.JsonObject
 
 object Application {
 
-    fun debug() = "true" == System.getProperty("debug")
+    private var debug = false
+    var fontFile = ""
 
-    fun fontFile() = System.getProperty("font.location", "") + "/" + System.getProperty("font.name", "HZK16C")
+    fun debug() = debug
+
+    fun setConfig(config: JsonObject) {
+        debug = config.getString("debug", "false") == "true"
+        val font = config.getJsonObject("font")
+        if (font != null) {
+            fontFile = font.getString("location") + "/" + font.getString("name")
+        }
+    }
 
     fun same(b1: ShortArray, b2: ShortArray) {
         if (b1.size != b2.size) {

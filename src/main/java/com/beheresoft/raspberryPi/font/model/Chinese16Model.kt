@@ -11,7 +11,7 @@ object Chinese16Model {
     private lateinit var fontCache: ByteArray
 
     init {
-        FileInputStream(Application.fontFile()).use {
+        FileInputStream(Application.fontFile).use {
             fontCache = ByteArray(it.available())
             it.read(fontCache)
         }

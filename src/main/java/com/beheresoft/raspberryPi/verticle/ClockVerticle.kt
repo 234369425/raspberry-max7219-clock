@@ -1,7 +1,8 @@
 package com.beheresoft.raspberryPi.verticle
 
+import com.beheresoft.raspberryPi.DISPLAY_ADDRESS
+import com.beheresoft.raspberryPi.REFRESH_RATE
 import com.beheresoft.raspberryPi.verticle.bean.DisplayMessage
-import com.beheresoft.raspberryPi.verticle.bean.DisplayMessageCodec
 import io.vertx.core.AbstractVerticle
 import java.lang.Thread.sleep
 import java.text.SimpleDateFormat
@@ -48,7 +49,7 @@ class ClockVerticle : AbstractVerticle() {
                     }
                 }
                 vertx.eventBus().send(DISPLAY_ADDRESS, message)
-                sleep(100)
+                sleep(REFRESH_RATE)
             }
         }
     }

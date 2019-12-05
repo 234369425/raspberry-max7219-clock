@@ -205,7 +205,7 @@ class ChineseString {
      * 无参构造函数
      */
     public ChineseString() {
-        File file = new File(Application.INSTANCE.fontFile());// 字库文件，放在同一目录下
+        File file = new File(Application.INSTANCE.getFontFile());// 字库文件，放在同一目录下
         try {
             FileInputStream fis = new FileInputStream(file);
             dotfont = new byte[fis.available()];

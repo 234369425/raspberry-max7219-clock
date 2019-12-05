@@ -21,7 +21,7 @@ object CMD {
                     }
                 }
             }
-        }.start()
+        }
         if (timeout > 0) {
             process.waitFor(timeout, TimeUnit.MILLISECONDS)
         } else {
