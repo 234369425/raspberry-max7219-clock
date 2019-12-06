@@ -10,7 +10,8 @@ import io.vertx.core.json.JsonObject
 object Application {
 
     private var debug = false
-    var fontFile = ""
+    //var fontFile = "i:/clock/fonts/hzk16f"
+    var fontFile = "d:/Microsoft YaHei UI Light_cpr_16_16.bft"
 
     fun debug() = debug
 
@@ -60,7 +61,7 @@ object Application {
         System.setProperty("debug", "true")
         System.setProperty("font.location", "I:\\clock\\fonts")
 
-        val string = "他AA"
+        val string = "哈AA"
         val b1 = FontModel.parse(string)
         val b2 = MyStrings().getStringBuffer(string)
         same(b1, b2)

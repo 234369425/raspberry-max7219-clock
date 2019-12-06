@@ -86,6 +86,36 @@ public class MyStrings {
         return myStringList;
     }
 
+    public void printByConsole(short[] buffer)
+    {
+        int key[] =
+                { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+
+        int strLength = buffer.length;
+        if (strLength % 32 != 0)
+        {
+            System.out.println("字符串缓存返回错误（不是32的倍数）");
+            return;
+        }
+        for (int len = 0; len < strLength / 32; len++)
+        {
+            for (int k = 0; k < 16; k++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    short byteDate = buffer[k * 2 + j + len * 32];
+                    for (int i = 0; i < 8; i++)
+                    {
+                        int flag = byteDate & key[i];
+                        System.out.printf("%s", flag == 0 ? "○ " : "● ");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println("************************");
+        }
+    }
+
     /**
      * 测试用，通过控制台打印输出汉字
      *
@@ -106,7 +136,7 @@ public class MyStrings {
                     short byteDate = buffer[k + 16 * j + len * 32];
                     for (int i = 0; i < 8; i++) {
                         int flag = byteDate & key[i];
-                        System.out.printf("%s", flag == 0 ? "　" : "●");
+                        System.out.printf("%s", flag == 0 ? "○ " : "● ");
                     }
                 }
                 System.out.println();
@@ -187,7 +217,7 @@ class EnglishString {
  *
  * @author
  */
-class ChineseString {
+ class ChineseString {
     private byte[] dotfont;// 字库缓存
     private String chineseStrings;
 
@@ -205,7 +235,7 @@ class ChineseString {
      * 无参构造函数
      */
     public ChineseString() {
-        File file = new File(Application.INSTANCE.getFontFile());// 字库文件，放在同一目录下
+        File file = new File("i:/clock/fonts/HZK16C");// 字库文件，放在同一目录下
         try {
             FileInputStream fis = new FileInputStream(file);
             dotfont = new byte[fis.available()];
