@@ -24,7 +24,7 @@ object Weather {
             var temperature = now["temperature"].toString()
             val allLength = text.toString().length + 1
             val len = (4 - allLength) * 2
-            val eLen = len - temperature.length
+            val eLen = len - temperature.length - 2
             var uLen = 0
             for (i in 0 until eLen / 2) {
                 uLen++
