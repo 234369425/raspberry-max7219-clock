@@ -1,0 +1,3 @@
+ps -ef|grep java |grep clock |awk '{print $2}' |xargs kill -9
+
+nohup java -jar /opt/java/clock-1.0-SNAPSHOT-fat.jar run com.beheresoft.raspberryPi.MainVerticle --conf=/opt/java/config/config.json -cp=/opt/pi4j/lib/* &

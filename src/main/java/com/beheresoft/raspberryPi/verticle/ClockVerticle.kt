@@ -12,23 +12,32 @@ import kotlin.concurrent.thread
 class ClockVerticle : AbstractVerticle() {
 
     override fun start() {
-        val time = SimpleDateFormat("HH:mm:ss")
+        val time = SimpleDateFormat("HH mm ss")
+        val tm = SimpleDateFormat("HH:mm:ss")
         val date = SimpleDateFormat("MM月dd日")
         var calendar: Calendar
         var message: DisplayMessage
+        var i = 0
         thread {
             while (true) {
                 calendar = Calendar.getInstance()
                 val seconds = calendar.get(Calendar.SECOND)
                 val minute = calendar.get(Calendar.MINUTE)
-
+                val fmt = if (i++ <= 4) {
+                    time
+                } else {
+                    tm
+                }
+                if (i == 9) {
+                    i = 0
+                }
                 message = when {
                     minute % 4 == 0 &&
                             seconds in 40..45 -> {
                         DisplayMessage(date.format(System.currentTimeMillis()), level = DisplayMessage.LEVEL.HIGH)
                     }
                     else -> {
-                        DisplayMessage(time.format(System.currentTimeMillis()), level = DisplayMessage.LEVEL.LOW)
+                        DisplayMessage(fmt.format(System.currentTimeMillis()), level = DisplayMessage.LEVEL.LOW)
                     }
                 }
 

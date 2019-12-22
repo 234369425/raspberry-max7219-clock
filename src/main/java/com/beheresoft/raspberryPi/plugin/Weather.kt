@@ -18,19 +18,18 @@ object Weather {
             val result = File(file).readText()
             val rs = Gson().fromJson(result, Rs::class.java)
             val location = rs.results!![0]["location"]
-            val name = (location as Map<*, *>)["name"]
             val now = rs.results!![0]["now"]
             val text = (now as LinkedTreeMap<*, *>)["text"]
             var temperature = now["temperature"].toString()
-            val allLength = text.toString().length + 1
-            val len = (4 - allLength) * 2
-            val eLen = len - temperature.length - 2
+            val allLength = text.toString().length
+            val len = (4 - 1 - allLength) * 2
+            val eLen = len - temperature.length
             var uLen = 0
             for (i in 0 until eLen / 2) {
                 uLen++
                 temperature = " $temperature"
             }
-            for (i in 0..eLen - uLen) {
+            for (i in 0 until eLen - uLen) {
                 temperature = "$temperature "
             }
 
