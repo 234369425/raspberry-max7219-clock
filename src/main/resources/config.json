@@ -13,6 +13,15 @@
         "filePath": "/opt/java/data/weather.json",
         "format": ""
       }
+    },
+    {
+      "event": "quartz:sign:event",
+      "cron": "1 * * * * ? ",
+      "description": "sign",
+      "args": {
+        "url": "/opt/java/data/weather.json",
+        "format": ""
+      }
     }
   ]
 }

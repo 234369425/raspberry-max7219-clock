@@ -1,5 +1,6 @@
 package com.beheresoft.games.infant.chinese
 
+import com.beheresoft.raspberryPi.Application.socketFactory
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URLEncoder
@@ -43,35 +44,6 @@ object SimpleChinese {
         player.start()*/
     }
 
-
-    private fun socketFactory(): SSLSocketFactory {
-        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-            @Throws(CertificateException::class)
-            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
-            }
-
-            @Throws(CertificateException::class)
-            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-            }
-
-            override fun getAcceptedIssuers(): Array<X509Certificate> {
-                return arrayOf()
-            }
-        })
-
-        try {
-            val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
-            return sslContext.socketFactory
-        } catch (e: Exception) {
-            when (e) {
-                is RuntimeException, is KeyManagementException -> {
-                    throw RuntimeException("Failed to create a SSL socket factory", e)
-                }
-                else -> throw e
-            }
-        }
-    }
 
     @JvmStatic
     fun main(args: Array<String>) {
