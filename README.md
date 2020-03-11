@@ -1,13 +1,20 @@
 
 一个树莓派8x8 16块LED组成的电子时钟
 
-![](https://raw.githubusercontent.com/234369425/clock/master/images/clock.jpg)
+![](https://raw.githubusercontent.com/234369425/raspberry-max7219-clock/master/images/clock.jpg)
 
-接线图
 
-[https://raw.githubusercontent.com/234369425/clock/master/images/lines_rasp_1.jpg](https://raw.githubusercontent.com/234369425/clock/master/images/lines_rasp_1.jpg "Max7219")
 
-[https://raw.githubusercontent.com/234369425/clock/master/images/lines_rasp_2.jpg](https://raw.githubusercontent.com/234369425/clock/master/images/lines_rasp_2.jpg "raspberry")
+我用的是3b+ 参考SPI接口图（也可以使用gpio readall查看）：
+[https://pi4j.com/1.2/pins/model-3b-plus-rev1.html](https://pi4j.com/1.2/pins/model-3b-plus-rev1.html "PI4J")
+
+也可以直接参考以下接线图
+
+
+![](https://raw.githubusercontent.com/234369425/raspberry-max7219-clock/master/images/lines_rasp_1.jpg "Max7219")
+
+
+![](https://raw.githubusercontent.com/234369425/raspberry-max7219-clock/master/images/lines_rasp_2.jpg "raspberry"!)
 
 
 ## 基于pi4j spi驱动开发，如果使用需要首先安装pi4j ##
@@ -15,8 +22,6 @@
 安装pi4j
     curl -sSL https://pi4j.com/install | sudo bash
 
-我用的是3b+ 参考SPI接口图（也可以使用gpio readall查看）：
-[https://pi4j.com/1.2/pins/model-3b-plus-rev1.html](https://pi4j.com/1.2/pins/model-3b-plus-rev1.html "PI4J")
 
 
 
