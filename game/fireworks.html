@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>恭喜你过关！</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            width: 100%;
+            height: 100%;
+        }
+        #container{
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            position: relative;
+        }
+		
+        .fireworks{
+            position: absolute;
+            left: 50%;
+            margin-left: -250px;
+            bottom: 60%;
+            margin-bottom: -180px;
+            transform: scale(0);
+            animation: fireworks 5s 3s infinite linear;
+			size:80px;
+        }
+		
+		.f1{
+			left:30%;
+			bottom: 40%;
+		}
+		
+		.f2{
+			left:70%;
+			bottom:50%;
+		}
+		
+		.f3{
+			left:55%;
+			bottom:40%;
+		}
+		
+		.f4{
+			left:75%;
+			top:20%;
+		}
+
+        @keyframes fireworks {
+            0%{
+                transform: scale(0);
+            }
+            80%{
+                transform: scale(1);
+            }
+            100%{
+                opacity: 0;
+            }
+        }
+        #firecracker{
+            position: absolute;
+            left: 50%;
+            bottom: 0%;
+            margin-left: -4px;
+            animation: firecracker 3s forwards  infinite linear;
+        }
+
+        @keyframes firecracker {
+            0%{
+                transform: scale(1);
+                bottom: 0%;
+            }
+            100%{
+                bottom: 60%;
+                transform: scale(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+	<div><img src="resources/hmbb.png"/></div>
+	<div class="fireworks" style="color:white;">Congratulation !</div>
+    <div class="fireworks"><img src="resources/fireworks.png" alt=""> </div>
+    <div class="fireworks f1"><img src="resources/fireworks.png" alt=""> </div>
+    <div class="fireworks f2"><img src="resources/fireworks.png" width="90%"> </div>
+    <div class="fireworks f3"><img src="resources/fireworks.png" width="150px"> </div>
+    <div class="fireworks f4"><img src="resources/fireworks.png" width="200px"> </div>
+    <div id="firecracker"><img src="resources/firecracker.png" alt="" width="8px"></div>
+	<button style="position:absolute;right:30px;bottom:30px;padding:50px;font-size:35px;" onclick="location.href='game.html'"> Continue </button>
+</div>
+</body>
+</html>

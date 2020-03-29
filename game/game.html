@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="resources/animate.min.css">
+    <style type="text/css">
+
+        .round {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            font-size: 30px;
+            text-align: center;
+            border-radius: 20px;
+            background-size: 100%;
+            color: chartreuse;
+            background-repeat: no-repeat;
+        }
+
+        body {
+            padding: 0px;
+            margin: 0px;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            cursor: url('resources/cur.ico'), auto;
+        }
+
+        #bg {
+            background-image: url("resources/background.jpg");
+            background-size: 100%;
+            background-position: center;
+            margin: 5px -30px;
+            color: white;
+        }
+
+        #question {
+            position: absolute;
+            top: 10px;
+            right: 0px;
+            font-size: 5rem;
+            color: white;
+        }
+
+        #heath {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+        }
+
+        #heath div {
+            height: 50px;
+            width: 50px;
+            float: left;
+            background-size: 80%;
+            background-position: center;
+            background-image: url("resources/baby.png");
+        }
+
+        #restart {
+            display: none;
+            font-size: 40px;
+            position: absolute;
+            right: 40%;
+            bottom: 50%;
+            width: 400px;
+            padding: 20px;
+        }
+
+    </style>
+</head>bg
+<body>
+<div id="bg" class="animated"><input type="checkbox" name="operator" value="+" checked/> +
+    <input type="checkbox" name="operator" value="-" checked/> -
+    <input type="checkbox" name="operator" value="x"/> x
+    <input type="checkbox" name="operator" value="/"/> /
+</div>
+<div id="question"></div>
+<div id="heath">
+
+</div>
+<button id="restart" onclick="location.href=location.href"> restart
+</button>
+<video id="vd" controls muted autoplay>
+    <source src="resources/bgm.mp3" type="video/mp4">
+</video>
+</body>
+<script>
+
+    (function () {
+        var used = {};
+        var catched = {};
+        var divSize = 80;
+        var nums = [];
+        var max = 18;
+        var min = 1;
+        var enableMethods = [];
+        var current = "+";
+        var heath = 5;
+
+        var hc = Math.ceil((window.screen.availHeight - divSize) / divSize);
+        var wc = Math.ceil((window.screen.availWidth - divSize) / divSize);
+        var question = document.getElementById("question");
+
+        function random() {
+            var w = 1 + Math.floor(Math.random() * (wc - 1));
+            var h = 1 + Math.floor(Math.random() * (hc - 2));
+            if (used[w + '' + h]) {
+                return random()
+            } else {
+                used[w + '' + h] = 1;
+                return [w, h]
+            }
+        }
+
+        function randomBg(div) {
+            var n = Math.floor(Math.random() * 4);
+            div.dataset.type = n + '';
+            if (n === 1) {
+                div.innerHTML = div.innerHTML + "&nbsp;&nbsp;";
+            } else if (n === 2) {
+                div.innerHTML = div.innerHTML + "&nbsp;&nbsp;&nbsp;&nbsp;";
+            } else if (n === 3) {
+                div.innerHTML = "&nbsp;" + div.innerHTML;
+            }
+            return "url(./resources/shuimu" + n + ".png)";
+        }
+
+        function randomNumber() {
+            var sum = 0;
+            for (var key in catched) {
+                sum += catched[key];
+            }
+            if (sum === catched.length) {
+                return;
+            }
+            var n0 = Math.floor(Math.random() * 10);
+            var n1 = Math.floor(Math.random() * 10);
+            var answer = 0;
+            switch (current) {
+                case '+':
+                    answer = n0 + n1;
+                    break;
+                case '-':
+                    var n = n0 < n1 ? n1 : n0;
+                    var n2 = n0 < n1 ? n0 : n1;
+                    n0 = n;
+                    n1 = n2;
+                    answer = n0 - n1;
+                    break;
+                case 'x':
+                    answer = n1 * n2;
+                    break;
+
+            }
+            console.log(current, answer, n0, n1)
+            if (answer < min || answer > max || catched[answer] === 1) {
+                randomNumber()
+            } else {
+                nums = [n0, n1];
+            }
+        }
+
+        function randomQuestion() {
+            for (var key in catched) {
+                if (catched[key] === 0) {
+                    randomNumber();
+                    question.innerText = nums[0] + " " + current + " " + nums[1] + " = ? ";
+                    question.classList.add("swing");
+                    question.classList.add("animated");
+                    return;
+                }
+            }
+            finish();
+        }
+
+        function finish() {
+            location.href = 'fireworks.html'
+        }
+
+        function dead() {
+            document.getElementById("bg").style.backgroundImage = 'url("resources/gameOver.jpg")';
+            var rounds = document.getElementsByClassName("round");
+            for (var i = rounds.length - 1; i >= 0; i--) {
+                document.body.removeChild(rounds[i]);
+            }
+            document.getElementById("bg").innerText = calcAnswer();
+            document.getElementById("restart").style.display = 'block';
+            document.getElementById("restart").innerText = calcAnswer() + ' ' + document.getElementById("restart").innerText;
+            console.log('game over')
+        }
+
+        function onError(ele) {
+            var e = document.getElementsByClassName("heath");
+            document.getElementById("bg").classList.add("flash");
+            setTimeout(function () {
+                document.getElementById("bg").classList.remove("flash")
+            }, 1000);
+            document.getElementById("heath").removeChild(e[0]);
+            if (e.length === 0) {
+                dead();
+                return;
+            }
+        }
+
+        function calcAnswer() {
+            switch (current) {
+                case '+':
+                    return nums[0] + nums[1];
+                case '-':
+                    return nums[0] - nums[1];
+                case 'x':
+                    return nums[0] * nums[1];
+            }
+            return nums[0] / nums[1];
+        }
+
+        function checkValue(ele) {
+            var answer = ele.innerText;
+            if (calcAnswer() === parseInt(answer)) {
+                question.classList.remove("swing");
+                question.classList.remove("animated");
+                catched[parseInt(answer)] = 1;
+                setTimeout(randomQuestion, 100);
+                current = enableMethods[Math.floor(Math.random() * enableMethods.length)];
+                if (current === '-') {
+                    var c = '+';
+                    for (var key in catched) {
+                        if (catched[key] === 0 && key < 10) {
+                            c = '-';
+                            break;
+                        }
+                    }
+                    current = c;
+                }
+                return true;
+            } else {
+                onError(ele);
+                question.classList.remove("swing");
+                question.classList.remove("animated");
+                return false;
+            }
+        }
+
+        document.getElementById("bg").style.height = window.screen.availHeight + 'px';
+
+        for (var i = min; i <= max; i++) {
+            var div = document.createElement("div");
+            var pos = random();
+            div.dataset.left = divSize * pos[0];
+            div.dataset.top = divSize * pos[1];
+            div.className = 'round';
+            div.innerHTML = i;
+            div.style.backgroundImage = randomBg(div);
+            div.dataset.ox = Math.random().toFixed(2);
+            div.dataset.oy = Math.random().toFixed(2);
+            catched[i] = 0;
+            div.addEventListener("click", function () {
+                var ele = this;
+                if (checkValue(this)) {
+                    this.classList.add("bounceOut");
+                    setTimeout(function () {
+                        document.body.removeChild(ele);
+                    }, 500)
+                }
+            });
+
+            div.addEventListener("mouseover", function () {
+                this.classList.add('heartBeat')
+            });
+
+            div.addEventListener("mouseout", function () {
+                this.classList.remove('heartBeat')
+            });
+
+            function move(div) {
+                var offsetX = 0.2 + parseFloat(div.dataset.ox);
+                var offsetY = 0.2 + parseFloat(div.dataset.oy);
+                if (div.dataset.type === "1" || div.dataset.type === "2") {
+                    offsetX = -0.2;
+                    offsetY = -0.2;
+                } else if (div.dataset.type === "0") {
+                    offsetX = 0;
+                    offsetY = -0.1;
+                } else if (div.dataset.type === "3") {
+                    offsetY = 0.1;
+                }
+                div.dataset.left = parseFloat(div.dataset.left) + offsetX;
+                div.dataset.top = parseFloat(div.dataset.top) + offsetY;
+                if (div.dataset.left > window.screen.availWidth) {
+                    div.dataset.left = "0";
+                }
+
+                if (div.dataset.left < 0) {
+                    div.dataset.left = window.screen.availWidth + "";
+                }
+
+                if (div.dataset.top > window.screen.availHeight) {
+                    div.dataset.top = "0";
+                }
+                if (div.dataset.top <= 0) {
+                    div.dataset.left = Math.random() * window.screen.availWidth - 80;
+                    div.dataset.top = window.screen.availHeight - 120;
+                }
+
+                div.style.left = div.dataset.left + "px";
+                div.style.top = div.dataset.top + "px";
+                setTimeout(function () {
+                    move(div)
+                }, 30);
+            }
+
+            move(div);
+            document.body.appendChild(div);
+        }
+        randomQuestion();
+
+        var operator = document.getElementsByName("operator");
+        for (var i = 0; i < operator.length; i++) {
+            if (operator[i].checked) {
+                enableMethods.push(operator[i].value)
+            }
+        }
+
+        for (var i = 0; i < heath; i++) {
+            var d = document.createElement("div");
+            d.classList.add("heath");
+            document.getElementById("heath").appendChild(d);
+        }
+        1
+
+    })();
+
+
+    function toggleSound() {
+        var music = document.getElementById("vd");//获取ID  
+        if (music.paused) { //判读是否播放  
+            music.paused = false;
+            music.play(); //没有就播放 
+        }
+
+    }
+
+    setInterval(toggleSound, 1);
+</script>
+</html>
